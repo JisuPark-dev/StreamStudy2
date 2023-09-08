@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.15'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id "me.champeau.jmh" version "0.6.2"
+}
+
+group = 'javaStudy'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '11'
+}
+
+repositories {
+    mavenCentral()
+}
+
+processJmhResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+jmh{
+    fork = 1
+    warmupIterations =1
+    iterations = 1
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

@@ -3,6 +3,7 @@ package javastudy;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.concurrent.TimeUnit;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 @BenchmarkMode(Mode.AverageTime) // 벤치마크 대상 메서드를 실행하는 데 걸린 평균 시간 측정
@@ -11,7 +12,7 @@ import java.util.stream.Stream;
 public class Sample {
     @State(Scope.Thread)
     public static class MyState {
-        public long value = 100000000;
+        public long value = 500000000;
 
         @TearDown(Level.Invocation)
         public void tearDown() {
@@ -41,6 +42,17 @@ public class Sample {
         return Stream.iterate(1L, i -> i + 1)
                 .limit(myState.value)
                 .parallel() // 스트림을 병렬 스트림으로 변환
+                .reduce(0L, Long::sum);
+    }
+
+    @Benchmark
+    public long rangeSum(MyState myState){
+        return LongStream.rangeClosed(1, myState.value).reduce(0L, Long::sum);
+    }
+    @Benchmark
+    public long parallelRangeSum(MyState myState){
+        return LongStream.rangeClosed(1, myState.value)
+                .parallel()
                 .reduce(0L, Long::sum);
     }
 
